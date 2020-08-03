@@ -1,9 +1,9 @@
 const quoteContainer = document.getElementById('quote-container');
-const quoteText = document.getElementById('quote');
-const authorText = document.getElementById('author');
+const message = document.getElementById('quote');
+const author = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
-const loader = document.getElementById('loader');
+//const loader = document.getElementById('loader');
 
 
 //Show loading
@@ -23,39 +23,43 @@ function complete (){
 }
 
 //Get quote from API
-async function getQuote(){
+function getQuote(){
     loading();
-    const proxyURL = 'https://cors-anywhere.herokuapp.com/'
-    const apiURL = 'http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
-    try {
-        const response = await fetch(proxyURL + apiURL);
-        const data = await response.json();
-        // If Author is blank add unknown
-        if (data.quoteAuthor === ''){
-            authorText.innerText = 'Unknown';
-        } else {
-            authorText.innerText = data.quoteAuthor;
-        }
-        // Reduce font size for long quotes 
-        if( data.quoteText.length > 120) {
-            quoteText.classList.add('long-quote');
+    fetch("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
+    .then(data => data.json())
+    .then(data => {
+        message.innerHTML = data.message
+        author.innerHTML = 'TRUMP'
+    })
 
-       } else {
-           quoteText.classList.remove('long-quote');
-       }
-        quoteText.innerText = data.quoteText;
+    //loading();
+    // const apiURL = 'https://api.whatdoestrumpthink.com/api/v1/quotes/random';
+    // try {
+    //     const response = await fetch(apiURL);
+    //     const data = await response.json();
+    //     // If Author is blank add unknown
+    //     if (data.author === ''){
+    //         authorText.innerText = 'TRUMP';
+    //     } else {
+    //         authorText.innerText = data.quoteAuthor;
+    //     }
+    //     // Reduce font size for long quotes 
+    //     if( data.message.length > 120) {
+    //         quoteText.classList.add('long-quote');
+
+    //    } else {
+    //        quoteText.classList.remove('long-quote');
+    //    }
+    //     quoteText.innerText = data.message;
         //Stop loader, show  quote
         complete();
-    } catch (error) {
-        getQuote();
-    }
 }
 
 
 // tweet quote
 function tweetQuote(){
-    const quote = quoteText.innerText;
-    const author = authorText.innerText;
+    const quote = message.innerText;
+    const author = 'Trump';
     const twitterURL = `https://twitter.com/intent/tweet?text=${quote} - ${author}`;
     window.open(twitterURL, '_blank');
 }
